@@ -1,17 +1,25 @@
+import gmaps from 'gmaps'
 
-export default function() {
+export default function(map) {
 
-    if( navigator.geolocation ) {
+    gmaps.geolocate({
+        success(position) {
 
-        navigator.geolocation.getCurrentPosition(position => {
-            let pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            }
+            let lat = position.coords.latitude,
+                lng = position.coords.longitude,
+                content = 'Ich bin hier!'
 
-            console.log(pos);
-        })
-
-    }
+            map.addMarker({ lat, lng, infoWindow: { content } })
+        },
+        error(error) {
+            console.log('Geolocation failed: '+ error.message)
+        },
+        not_supported() {
+            console.log('Your browser does not support geolocation.')
+        },
+        always() {
+            console.log('Done!')
+        }
+    })
 
 }
