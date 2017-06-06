@@ -54,13 +54,14 @@
 
 @include column(4);
 @include column(6);
+@include column(8);
 @include column(12);
 
 
 ////////////
 // SM-UP
 @media(min-width: $sm-up) {
-    
+
     @include fullWidthColumn(sm);
     @include autoWidthColumn(sm);
 

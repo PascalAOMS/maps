@@ -1,26 +1,28 @@
-import gmaps from 'gmaps'
 
-export default function(map) {
-
-    let address = document.getElementById('input-address')
+export default function(map, userAddress, userLocation) {
 
 
 
-    gmaps.geocode({
-        address,
-        callback(results, status) {
-            console.log(status);
-            if( status == 'OK' ) {
-                console.log(results);
-                let latlng = results[0].geometry.location
+    let address = userAddress
 
-                map.setCenter(latlng.lat(), latlng.lng())
-                map.addMarker({
-                    lat: latlng.lat(),
-                    lng: latlng.lng()
-                })
-            }
+    if( address.indexOf('berlin') < 0 ) {
+        address += ' berlin'
+    }
 
+    const GEOCODER = new google.maps.Geocoder()
+
+    GEOCODER.geocode({ address }, (results, status) => {
+        if( status === 'OK' ) {
+            let position = results[0].geometry.location
+
+            map.setCenter(position)
+
+            let marker = new google.maps.Marker({
+                position,
+                map,
+                title: 'Ich bin hier!',
+                icon: '../assets/img/pin-user.png'
+            })
         }
     })
 
