@@ -41,7 +41,7 @@
 </template>
 
 <script>
-
+import store from '@/store'
 import { EventBus } from '@/main'
 import { setMapOnAll } from '@/map/helpers'
 import geolocation from '@/map/geolocation'
@@ -61,6 +61,10 @@ export default {
             userAddress: 'tramper weg 1',
             markers: []
         }
+    },
+
+    computed: {
+        vuexlocations() { return this.$store.getters.locations }
     },
 
     watch: {
@@ -141,7 +145,11 @@ export default {
             fetch('../fuchs.json')
                 .then(res => res.json())
                 .then(res => this.locations = res)
-                .then(() => {
+                .then(res => {
+
+                    store.commit('SET_LOCATIONS', res)
+
+                    console.log(this.vuexlocations);
 
                     if( this.map ) { // check if map loaded once
                         return this.resizeMap()
@@ -230,15 +238,16 @@ export default {
                         icon: '../assets/img/pin-user.png'
                     })
 
-                    setMapOnAll(this.markers, null)
 
-                    if( this.userLocation )
+                    if( this.userLocation ) {
+                        this.markers[this.markers.length - 1].setMap(null) // hide last marker which is user's
                         this.markers.pop() // delete old user location
+                    }
 
                     this.userLocation = position
                     this.markers.push(userMarker)
 
-                    setMapOnAll(this.markers, this.map) // render all markers again
+                    this.markers[this.markers.length - 1].setMap(this.map) // render all markers again
                     this.map.setCenter(position)
                 }
             })
