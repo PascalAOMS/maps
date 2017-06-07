@@ -43,28 +43,23 @@
 <script>
 import store from '@/store'
 import { EventBus } from '@/main'
-import { setMapOnAll } from '@/map/helpers'
 import geolocation from '@/map/geolocation'
 import geocoding from '@/map/geocoding'
-
-const icon = '../assets/img/pin.png'
-
-
 
 
 export default {
     data() {
         return {
-            map: null,
-            locations: [],
-            userLocation: null,
             userAddress: 'tramper weg 1',
-            markers: []
         }
     },
 
     computed: {
-        vuexlocations() { return this.$store.getters.locations }
+        map()          { return this.$store.getters.map },
+        mapCenter()    { return this.$store.getters.mapCenter },
+        locations()    { return this.$store.getters.locations },
+        userLocation() { return this.$store.getters.userLocation },
+        markers()      { return this.$store.getters.markers }
     },
 
     watch: {
@@ -79,8 +74,8 @@ export default {
 
     mounted() {
 
-        this.initMap()
-
+        //this.handleMap('init')
+            //.then(() => geolocation())
 
 
         // let directionsService = new google.maps.DirectionsService(),
@@ -123,54 +118,53 @@ export default {
 
     methods: {
 
-        initMap() {
-            let mapContainer = document.getElementById('map')
+        handleMap(process) {
 
-            this.map = new google.maps.Map(mapContainer, {
-                zoom: 6,
-                center: { lat: 52.507629, lng: 13.1459666 }
-            })
+            if( process === 'init' ) {
+                let mapContainer = document.getElementById('map')
+
+                const map = new google.maps.Map(mapContainer, {
+                    zoom: 6,
+                    center: this.mapCenter
+                })
+
+                store.commit('CREATE_MAP', map)
+            }
+            else if( process === 'resize' ) {
+                google.maps.event.trigger(map, 'resize')
+            }
 
             this.addLocationMarkers()
+            geolocation()
 
-
-        },
-
-        resizeMap() {
-            google.maps.event.trigger(map, 'resize')
-            this.addLocationMarkers()
         },
 
         fetchLocations() {
             fetch('../fuchs.json')
                 .then(res => res.json())
-                .then(res => this.locations = res)
+                .then(res => store.commit('SET_LOCATIONS', res))
                 .then(res => {
-
-                    store.commit('SET_LOCATIONS', res)
-
-                    console.log(this.vuexlocations);
-
-                    if( this.map ) { // check if map loaded once
-                        return this.resizeMap()
-                    }
-
-                    return this.initMap()
+                    // check if map loaded once
+                    this.handleMap(store.map ? 'resize' : 'init')
                 })
         },
 
         addLocationMarkers() {
-            this.locations.map(location => {
+
+            for( let i = 0; i < this.locations.length; i++ ) {
+
+                let lat = parseFloat(this.locations[i].lat),
+                    lng = parseFloat(this.locations[i].lng)
 
                 let marker = new google.maps.Marker({
-                    position: { lat: location.lat, lng: location.lng },
+                    position: { lat, lng },
                     map: this.map,
-                    title: 'Hello World!',
-                    icon
+                    title: 'Hello!',
+                    icon: '../assets/img/pin.png'
                 })
 
                 let infoWindow = new google.maps.InfoWindow({
-                    content: location.description,
+                    content: this.locations[i].description,
                     maxWidth: 200
                 })
 
@@ -179,8 +173,8 @@ export default {
                     infoWindow.open(this.map, marker)
                 })
 
-                this.markers.push(marker)
-            })
+                store.commit('PUSH_MARKER_TO_LIST', marker)
+             }
 
         },
 
@@ -217,41 +211,7 @@ export default {
         //
         //
         //
-        geocoding() {
-            let address = this.userAddress
-
-            if( address.indexOf('berlin') < 0 ) {
-                address += ' berlin'
-            }
-
-            const GEOCODER = new google.maps.Geocoder()
-
-            GEOCODER.geocode({ address }, (results, status) => {
-                if( status === 'OK' ) {
-                    let position = results[0].geometry.location
-
-
-                    let userMarker = new google.maps.Marker({
-                        position,
-                        map: this.map,
-                        title: 'Ich bin hier!',
-                        icon: '../assets/img/pin-user.png'
-                    })
-
-
-                    if( this.userLocation ) {
-                        this.markers[this.markers.length - 1].setMap(null) // hide last marker which is user's
-                        this.markers.pop() // delete old user location
-                    }
-
-                    this.userLocation = position
-                    this.markers.push(userMarker)
-
-                    this.markers[this.markers.length - 1].setMap(this.map) // render all markers again
-                    this.map.setCenter(position)
-                }
-            })
-        },
+        geocoding() { geocoding(this.userAddress) },
 
 
     }

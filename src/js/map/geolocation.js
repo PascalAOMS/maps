@@ -1,25 +1,53 @@
-import gmaps from 'gmaps'
+import store, { state } from '../store'
 
-export default function(map) {
+export default function() {
 
-    gmaps.geolocate({
-        success(position) {
+    google.maps.event.addListenerOnce(state.map, 'idle', () => {
 
-            let lat = position.coords.latitude,
-                lng = position.coords.longitude,
-                content = 'Ich bin hier!'
+        if( navigator.geolocation ) {
 
-            map.addMarker({ lat, lng, infoWindow: { content } })
-        },
-        error(error) {
-            console.log('Geolocation failed: '+ error.message)
-        },
-        not_supported() {
-            console.log('Your browser does not support geolocation.')
-        },
-        always() {
-            console.log('Done!')
+            navigator.geolocation.getCurrentPosition(pos => {
+                let position = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                }
+
+                let marker = new google.maps.Marker({
+                    position: { lat: position.lat, lng: position.lng },
+                    map: state.map,
+                    title: 'Ich bin hier!',
+                    icon: '../assets/img/pin-user.png'
+                })
+
+                let infoWindow = new google.maps.InfoWindow({
+                    content: 'Ich bin hier!',
+                    maxWidth: 200
+                })
+
+                marker.addListener('click', () => {
+                    //infoWindow.close()
+                    infoWindow.open(state.map, marker)
+                })
+
+                store.commit('PUSH_MARKER_TO_LIST', marker)
+                state.map.setCenter(position)
+                state.map.setZoom(10)
+                infoWindow.open(state.map, marker)
+
+                setTimeout(() => {
+                    infoWindow.close(state.map)
+                }, 2000)
+
+                setTimeout(() => {
+                    state.map.setCenter(state.mapCenter)
+                    state.map.setZoom(6)
+                }, 3000)
+
+            }, function() {
+                alert('Not supported.')
+            })
         }
+
     })
 
 }

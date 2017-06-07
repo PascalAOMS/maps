@@ -18,3 +18,10 @@ export function getLoadedBackground(src, cb) {
     if( img.complete ) img.onload()
 
 }
+
+// Hide/Show markers on map
+export function setMapOnAll(markers, map) {
+    for( let i = 0; i < markers.length; i++ ) {
+        markers[i].setMap(map);
+    }
+}

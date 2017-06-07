@@ -1,11 +1,9 @@
 import { state } from '../store'
 
 
-export default function(map, userAddress, userLocation) {
+export default function(userAddress) {
 
-    console.log(state.locations);
-
-    let address = this.userAddress
+    let address = userAddress
 
     if( address.indexOf('berlin') < 0 ) {
         address += ' berlin'
@@ -20,22 +18,21 @@ export default function(map, userAddress, userLocation) {
 
             let userMarker = new google.maps.Marker({
                 position,
-                map: this.map,
+                map: state.map,
                 title: 'Ich bin hier!',
                 icon: '../assets/img/pin-user.png'
             })
 
-
-            if( this.userLocation ) {
-                this.markers[this.markers.length - 1].setMap(null) // hide last marker which is user's
-                this.markers.pop() // delete old user location
+            if( state.userLocation ) {
+                state.markers[state.markers.length - 1].setMap(null) // hide last marker which is user's
+                state.markers.pop() // delete old user location
             }
 
-            this.userLocation = position
-            this.markers.push(userMarker)
+            state.userLocation = position
+            state.markers.push(userMarker)
 
-            this.markers[this.markers.length - 1].setMap(this.map) // render all markers again
-            this.map.setCenter(position)
+            state.markers[state.markers.length - 1].setMap(state.map) // render all markers again
+            state.map.setCenter(position)
         }
     })
 

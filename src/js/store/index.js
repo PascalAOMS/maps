@@ -5,13 +5,20 @@ import mutations from './mutations'
 
 Vue.use(Vuex)
 
-let state = {
-    locations: 'test'
+export let state = {
+    map: null,
+    mapCenter: { lat: 52.507629, lng: 13.1459666 },
+    locations: 'test',
+    userAddress: null,
+    userLocation: null,
+    markers: [],
 }
 
 
 const getters = {
-    locations: state => state.locations
+    map: state => state.map,
+    locations: state => state.locations,
+    mapCenter: state => state.mapCenter,
 }
 
 
