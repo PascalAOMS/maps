@@ -9,18 +9,25 @@
             <div class="row">
 
 
-                <form class="col-12" @submit.prevent="geocoding">
+                <form class="col-6" @submit.prevent="geocoding()">
                     <input v-model="userAddress">
                 </form>
 
-                <ul class="col-4">
-                    <!-- <li v-for="(location, i) in locations" @click="focusLocation(i)">
-                        <b>{{ location.name }}</b><br>
-                        {{ location.description }}
+                <select class="col-2" v-model="travelMode">
+                    <option value="WALKING">zu Fuß</option>
+                    <option value="TRANSIT">Bus/Bahn</option>
+                    <option value="DRIVING">Auto</option>
+                    <option value="BICYCLING">Fahrrad</option>
+                </select>
 
-                        <hr>
-                    </li> -->
-                </ul>
+                <button class="col-2" v-if="userLocation" @click="calcRoute()">Zeige Route</button>
+                <button class="col-2" @click="geolocation()">Geolocation</button>
+
+                <div class="col-4">
+                    <router-link to="/" >Zeige alle Orte</router-link>
+                    <router-view></router-view>
+                </div>
+
 
                 <div id="route-panel" class="col-8"></div>
 
@@ -42,15 +49,18 @@
 
 <script>
 import store from '@/store'
+import { fitInBounds } from '@/lib/utils'
 import { EventBus } from '@/main'
 import geolocation from '@/map/geolocation'
 import geocoding from '@/map/geocoding'
+import calcRoute from '@/map/calcRoute'
 
 
 export default {
     data() {
         return {
             userAddress: 'tramper weg 1',
+            travelMode: 'WALKING'
         }
     },
 
@@ -59,58 +69,25 @@ export default {
         mapCenter()    { return this.$store.getters.mapCenter },
         locations()    { return this.$store.getters.locations },
         userLocation() { return this.$store.getters.userLocation },
-        markers()      { return this.$store.getters.markers }
+        markers()      { return this.$store.getters.markers },
+        focusedLocation() { return this.$store.getters.focusedLocation }
     },
 
     watch: {
 
+        travelMode() {
+            calcRoute(this.userLocation, this.focusedLocation, this.travelMode)
+        }
+
     },
 
     created() {
-
         this.fetchLocations()
-
     },
 
     mounted() {
 
-        //this.handleMap('init')
-            //.then(() => geolocation())
 
-
-        // let directionsService = new google.maps.DirectionsService(),
-        //     directionsDisplay,
-        //     map
-        //
-        // function initialize() {
-        //     directionsDisplay = new google.maps.DirectionsRenderer();
-        //     var chicago = new google.maps.LatLng(41.850033, -87.6500523);
-        //     var mapOptions = {
-        //         zoom:7,
-        //         center: chicago
-        //     }
-        //     map = new google.maps.Map(document.getElementById('map'), mapOptions);
-        //     directionsDisplay.setMap(map);
-        //     directionsDisplay.setPanel(document.getElementById('route-panel'));
-        // }
-        //
-        // function calcRoute() {
-        //     var request = {
-        //         origin: { lat: 51.1234, lng: 13.245 },
-        //         destination: { lat: 52.1234, lng: 14.245 },
-        //         travelMode: 'DRIVING'
-        //     }
-        //
-        //     directionsService.route(request, function(result, status) {
-        //         if (status == 'OK') {
-        //             directionsDisplay.setDirections(result);
-        //         }
-        //     })
-        // }
-        //
-        // initialize()
-        // calcRoute()
-            //geocoding(map)
 
 
 
@@ -124,8 +101,8 @@ export default {
                 let mapContainer = document.getElementById('map')
 
                 const map = new google.maps.Map(mapContainer, {
-                    zoom: 6,
-                    center: this.mapCenter
+                    //zoom: 6,
+                    //center: this.mapCenter
                 })
 
                 store.commit('CREATE_MAP', map)
@@ -135,7 +112,7 @@ export default {
             }
 
             this.addLocationMarkers()
-            geolocation()
+            //geolocation()
 
         },
 
@@ -174,44 +151,72 @@ export default {
                 })
 
                 store.commit('PUSH_MARKER_TO_LIST', marker)
+
+                fitInBounds(this.markers)
              }
 
         },
 
-        // focusLocation(i) {
-        //     this.map.removeMarkers()
+        // calcRoute() {
+        //     let directionsService = new google.maps.DirectionsService(),
+        //         directionsDisplay = new google.maps.DirectionsRenderer(),
+        //         routePanel = document.getElementById('route-panel')
         //
-        //     let focusedLocation = this.locations[i]
         //
-        //     this.map.addMarker({
-        //         lat: focusedLocation.lat,
-        //         lng: focusedLocation.lng,
-        //         icon,
-        //         click(i) { // when in loop, set iterator to focus list item on marker click
-        //             console.log(i);
-        //         },
-        //         infoWindow: {
-        //             content: 'Hi'
+        //     directionsDisplay.setMap(this.map);
+        //     directionsDisplay.setPanel(routePanel);
+        //
+        //
+        //     let request = {
+        //         origin: { lat: 51.1234, lng: 13.245 },
+        //         destination: { lat: 52.1234, lng: 14.245 },
+        //         travelMode: 'DRIVING'
+        //     }
+        //
+        //     directionsService.route(request, (result, status) => {
+        //         if (status == 'OK') {
+        //             directionsDisplay.setDirections(result);
         //         }
         //     })
         //
-        //
-        //     if( this.userLocation.lat !== null ) {
-        //
-        //         this.map.addMarker({
-        //             lat: this.userLocation.lat,
-        //             lng: this.userLocation.lng,
-        //             icon: userIcon,
-        //             infoWindow: userInfoWindow
-        //         })
-        //
-        //         this.calcRoute(this.userLocation, focusedLocation)
-        //     }
         // },
-        //
-        //
-        //
+
+
+
+
+            // let focusedLocation = this.locations[i]
+            //
+            // this.map.addMarker({
+            //     lat: focusedLocation.lat,
+            //     lng: focusedLocation.lng,
+            //     icon,
+            //     click(i) { // when in loop, set iterator to focus list item on marker click
+            //         console.log(i);
+            //     },
+            //     infoWindow: {
+            //         content: 'Hi'
+            //     }
+            // })
+            //
+            //
+            // if( this.userLocation.lat !== null ) {
+            //
+            //     this.map.addMarker({
+            //         lat: this.userLocation.lat,
+            //         lng: this.userLocation.lng,
+            //         icon: userIcon,
+            //         infoWindow: userInfoWindow
+            //     })
+            //
+            //     this.calcRoute(this.userLocation, focusedLocation)
+            // }
+
+
+
+
         geocoding() { geocoding(this.userAddress) },
+        calcRoute() { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
+        geolocation() { geolocation() },
 
 
     }

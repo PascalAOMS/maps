@@ -1,7 +1,9 @@
-import { state } from '../store'
-
+import store, { state } from '../store'
+import { fitInBounds } from '@/lib/utils'
 
 export default function(userAddress) {
+
+    const GEOCODER = new google.maps.Geocoder()
 
     let address = userAddress
 
@@ -9,30 +11,48 @@ export default function(userAddress) {
         address += ' berlin'
     }
 
-    const GEOCODER = new google.maps.Geocoder()
-
     GEOCODER.geocode({ address }, (results, status) => {
+
         if( status === 'OK' ) {
+
             let position = results[0].geometry.location
 
-
-            let userMarker = new google.maps.Marker({
+            let marker = new google.maps.Marker({
                 position,
                 map: state.map,
                 title: 'Ich bin hier!',
                 icon: '../assets/img/pin-user.png'
             })
 
+            let infoWindow = new google.maps.InfoWindow({
+                content: 'Ich bin hier!',
+                maxWidth: 200
+            })
+
+            marker.addListener('click', () => {
+                //infoWindow.close()
+                infoWindow.open(state.map, marker)
+            })
+
+
             if( state.userLocation ) {
                 state.markers[state.markers.length - 1].setMap(null) // hide last marker which is user's
                 state.markers.pop() // delete old user location
             }
 
-            state.userLocation = position
-            state.markers.push(userMarker)
+            store.commit('SET_USER_LOCATION', marker)
+            store.commit('PUSH_MARKER_TO_LIST', marker)
 
             state.markers[state.markers.length - 1].setMap(state.map) // render all markers again
-            state.map.setCenter(position)
+
+            infoWindow.open(state.map, marker)
+            setTimeout(() => infoWindow.close(state.map), 2000)
+
+
+            fitInBounds(state.focusedLocation
+                             ? [state.focusedLocation, marker]
+                             : state.markers
+                        )
         }
     })
 

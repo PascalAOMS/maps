@@ -1,12 +1,14 @@
 import store, { state } from '../store'
+import { fitInBounds } from '../lib/utils'
 
 export default function() {
 
-    google.maps.event.addListenerOnce(state.map, 'idle', () => {
+    //google.maps.event.addListenerOnce(state.map, 'idle', () => {
 
         if( navigator.geolocation ) {
 
             navigator.geolocation.getCurrentPosition(pos => {
+
                 let position = {
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude
@@ -29,25 +31,29 @@ export default function() {
                     infoWindow.open(state.map, marker)
                 })
 
+
+                if( state.userLocation ) {
+                    state.markers[state.markers.length - 1].setMap(null) // hide last marker which is user's
+                    state.markers.pop() // delete old user location
+                }
+
+                store.commit('SET_USER_LOCATION', marker)
                 store.commit('PUSH_MARKER_TO_LIST', marker)
-                state.map.setCenter(position)
-                state.map.setZoom(10)
+
                 infoWindow.open(state.map, marker)
+                setTimeout(() => infoWindow.close(state.map), 2000)
 
-                setTimeout(() => {
-                    infoWindow.close(state.map)
-                }, 2000)
+                fitInBounds(state.focusedLocation
+                                 ? [state.focusedLocation, marker]
+                                 : state.markers
+                            )
 
-                setTimeout(() => {
-                    state.map.setCenter(state.mapCenter)
-                    state.map.setZoom(6)
-                }, 3000)
 
             }, function() {
                 alert('Not supported.')
             })
         }
 
-    })
+    //})
 
 }
