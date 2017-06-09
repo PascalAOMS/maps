@@ -1,7 +1,8 @@
+import calcRoute from './calcRoute'
 import store, { state } from '../store'
 import { fitInBounds } from '../lib/utils'
 
-export default function() {
+export default function(travelMode) {
 
     //google.maps.event.addListenerOnce(state.map, 'idle', () => {
 
@@ -37,6 +38,8 @@ export default function() {
                     state.markers.pop() // delete old user location
                 }
 
+
+
                 store.commit('SET_USER_LOCATION', marker)
                 store.commit('PUSH_MARKER_TO_LIST', marker)
 
@@ -48,6 +51,10 @@ export default function() {
                                  : state.markers
                             )
 
+
+                if( state.directionsRenderer ) {
+                    calcRoute(state.userLocation, state.focusedLocation, travelMode)
+                }
 
             }, function() {
                 alert('Not supported.')

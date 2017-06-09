@@ -1,45 +1,29 @@
 <template>
 
     <div>
-        <div id="map"></div>
+        <div id="map" :class="{ 'is-larger': largeMap }"></div>
 
-
-        <div class="container">
+        <main class="container">
 
             <div class="row">
 
 
-                <form class="col-6" @submit.prevent="geocoding()">
+                <form class="col-8" @submit.prevent="geocoding()">
                     <input v-model="userAddress">
                 </form>
 
-                <select class="col-2" v-model="travelMode">
-                    <option value="WALKING">zu Fuß</option>
-                    <option value="TRANSIT">Bus/Bahn</option>
-                    <option value="DRIVING">Auto</option>
-                    <option value="BICYCLING">Fahrrad</option>
-                </select>
-
-                <button class="col-2" v-if="userLocation" @click="calcRoute()">Zeige Route</button>
                 <button class="col-2" @click="geolocation()">Geolocation</button>
+                <button class="col-2" @click="largeMap = !largeMap">Toggle Map Size</button>
 
-                <div class="col-4">
+                <div class="col-12">
                     <router-link to="/" >Zeige alle Orte</router-link>
                     <router-view></router-view>
                 </div>
 
 
-                <div id="route-panel" class="col-8"></div>
-
-                <div class="button-row">
-                    <!-- <button @click="closeDetail()">Close Detail</button> -->
-                </div>
-
-
             </div>
 
-        </div>
-
+        </main>
 
     </div>
 
@@ -60,7 +44,8 @@ export default {
     data() {
         return {
             userAddress: 'tramper weg 1',
-            travelMode: 'WALKING'
+            travelMode: 'WALKING',
+            largeMap: false
         }
     },
 
@@ -70,16 +55,17 @@ export default {
         locations()    { return this.$store.getters.locations },
         userLocation() { return this.$store.getters.userLocation },
         markers()      { return this.$store.getters.markers },
-        focusedLocation() { return this.$store.getters.focusedLocation }
+        focusedLocation()    { return this.$store.getters.focusedLocation },
+        directionsRenderer() { return this.$store.getters.directionsRenderer }
     },
 
     watch: {
-
-        travelMode() {
-            calcRoute(this.userLocation, this.focusedLocation, this.travelMode)
+        largeMap() {
+            setTimeout(() => this.handleMap('resize'), 400)
         }
-
     },
+
+
 
     created() {
         this.fetchLocations()
@@ -106,12 +92,19 @@ export default {
                 })
 
                 store.commit('CREATE_MAP', map)
+
+                this.addLocationMarkers()
             }
             else if( process === 'resize' ) {
-                google.maps.event.trigger(map, 'resize')
+                google.maps.event.trigger(this.map, 'resize')
+
+                fitInBounds(this.focusedLocation
+                                 ? [this.focusedLocation, this.userLocation]
+                                 : this.markers
+                            )
             }
 
-            this.addLocationMarkers()
+
             //geolocation()
 
         },
@@ -157,32 +150,6 @@ export default {
 
         },
 
-        // calcRoute() {
-        //     let directionsService = new google.maps.DirectionsService(),
-        //         directionsDisplay = new google.maps.DirectionsRenderer(),
-        //         routePanel = document.getElementById('route-panel')
-        //
-        //
-        //     directionsDisplay.setMap(this.map);
-        //     directionsDisplay.setPanel(routePanel);
-        //
-        //
-        //     let request = {
-        //         origin: { lat: 51.1234, lng: 13.245 },
-        //         destination: { lat: 52.1234, lng: 14.245 },
-        //         travelMode: 'DRIVING'
-        //     }
-        //
-        //     directionsService.route(request, (result, status) => {
-        //         if (status == 'OK') {
-        //             directionsDisplay.setDirections(result);
-        //         }
-        //     })
-        //
-        // },
-
-
-
 
             // let focusedLocation = this.locations[i]
             //
@@ -214,9 +181,9 @@ export default {
 
 
 
-        geocoding() { geocoding(this.userAddress) },
-        calcRoute() { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
-        geolocation() { geolocation() },
+        geocoding()   { geocoding(this.userAddress) },
+        //calcRoute()   { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
+        geolocation() { geolocation(this.travelMode) },
 
 
     }

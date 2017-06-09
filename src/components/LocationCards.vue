@@ -31,7 +31,7 @@ export default {
 
             this.$router.push('/ort/' + this.locations[markerPos].name)
 
-            store.commit('SET_FOCUSED_LOCATION', this.markers[markerPos])
+            store.commit('SET_FOCUSED_LOCATION', { marker: this.markers[markerPos], index: markerPos })
 
             const bounds = new google.maps.LatLngBounds()
 

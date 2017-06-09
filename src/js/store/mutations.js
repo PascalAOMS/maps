@@ -7,7 +7,8 @@ export default {
         state.userLocation = userLocation
     },
     SET_FOCUSED_LOCATION(state, location) {
-        state.focusedLocation = location
+        state.focusedIndex    = location.index
+        state.focusedLocation = location.marker
     },
     CREATE_MAP(state, map) {
         state.map = map
@@ -17,5 +18,8 @@ export default {
     },
     SET_DIRECTIONS_RENDERER(state, renderer) {
         state.directionsRenderer = renderer
+    },
+    SET_ROUTE_META(state, meta) {
+        state.route = meta
     }
 }

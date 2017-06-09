@@ -10,11 +10,13 @@ export let state = {
     mapCenter: { lat: 52.507629, lng: 13.1459666 },
     locations: [],
     locationFocused: false,
+    focusedIndex: null,
     focusedLocation: null,
     userAddress: null,
     userLocation: null,
     markers: [],
-    directionsRenderer: null
+    directionsRenderer: null,
+    route: null
 }
 
 
@@ -22,10 +24,12 @@ const getters = {
     map: state => state.map,
     markers: state => state.markers,
     locations: state => state.locations,
+    focusedIndex: state => state.focusedIndex,
     focusedLocation: state => state.focusedLocation,
     userLocation: state => state.userLocation,
     mapCenter: state => state.mapCenter,
     directionsRenderer: state => state.directionsRenderer,
+    route: state => state.route,
 }
 
 

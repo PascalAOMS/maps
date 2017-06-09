@@ -6,6 +6,9 @@
     height: 400px;
     width: 100%;
     background-color: #eee;
+    transition: height .4s ease-out;
+
+    &.is-larger { height: 500px; }
 }
 
 .button-row {
@@ -20,4 +23,13 @@ input {
 
 .locations li {
     cursor: pointer;
+}
+
+.route-meta {
+    display: flex;
+
+    span {
+        flex: 1;
+        text-align: center;
+    }
 }
