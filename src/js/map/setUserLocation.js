@@ -32,7 +32,7 @@ export default function(position, address) {
     store.commit('SET_USER_LOCATION', marker)
     store.commit('PUSH_MARKER_TO_LIST', marker)
 
-    state.markers[state.markers.length - 1].setMap(state.map) // render all markers again
+    //state.markers[state.markers.length - 1].setMap(state.map) // render all markers again
 
     infoWindow.open(state.map, marker)
     setTimeout(() => infoWindow.close(state.map), 2000)
@@ -42,5 +42,9 @@ export default function(position, address) {
                      ? [state.focusedLocation, marker]
                      : state.markers
                 )
+
+    if( state.directionsRenderer ) {
+        calcRoute(state.userLocation, state.focusedLocation, travelMode)
+    }
 
 }

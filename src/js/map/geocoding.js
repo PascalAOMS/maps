@@ -12,8 +12,6 @@ export function geocoding(userAddress) {
         address = 'Berlin, ' + address
     }
 
-    console.log(address);
-
     GEOCODER.geocode({ address }, (results, status) => {
 
         if( status !== 'OK' ) {
@@ -21,7 +19,6 @@ export function geocoding(userAddress) {
             return
         }
 
-        console.log(results);
 
         let number,
             street,
@@ -41,10 +38,8 @@ export function geocoding(userAddress) {
             }
         }
 
-        console.log();
-
         let position = results[0].geometry.location,
-            formattedAddress = `${street} ${number}, ${district}`
+            formattedAddress = `${street} ${number ? number : ''}, ${district}`
 
         setUserLocation(position, formattedAddress)
 

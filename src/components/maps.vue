@@ -9,7 +9,7 @@
 
                 <div class="col-8 address-bar">
 
-                    <div class="address-input" v-if="inputShown">
+                    <div class="address-input" v-show="inputShown">
 
                         <form class="col" @submit.prevent="geocoding()">
                             <input id="input-geocoding" v-model="addressInput">
@@ -22,7 +22,7 @@
                         </button>
                     </div>
 
-                    <div class="col user-address" v-else>
+                    <div class="col user-address" v-show="!inputShown">
                         {{ userAddress }}
                         <button @click="inputShown = true">EDIT</button>
                     </div>
