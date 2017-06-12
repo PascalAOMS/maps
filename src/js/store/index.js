@@ -27,6 +27,7 @@ const getters = {
     focusedIndex: state => state.focusedIndex,
     focusedLocation: state => state.focusedLocation,
     userLocation: state => state.userLocation,
+    userAddress: state => state.userAddress,
     mapCenter: state => state.mapCenter,
     directionsRenderer: state => state.directionsRenderer,
     route: state => state.route,

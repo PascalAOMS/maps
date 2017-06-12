@@ -3,8 +3,11 @@ export default {
     SET_LOCATIONS(state, locations) {
         state.locations = locations
     },
-    SET_USER_LOCATION(state, userLocation) {
-        state.userLocation = userLocation
+    SET_USER_LOCATION(state, location) {
+        state.userLocation = location
+    },
+    SET_USER_ADDRESS(state, address) {
+        state.userAddress = address
     },
     SET_FOCUSED_LOCATION(state, location) {
         state.focusedIndex    = location.index

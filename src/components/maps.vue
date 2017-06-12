@@ -7,10 +7,27 @@
 
             <div class="row">
 
+                <div class="col-8 address-bar">
 
-                <form class="col-8" @submit.prevent="geocoding()">
-                    <input v-model="userAddress">
-                </form>
+                    <div class="address-input" v-if="inputShown">
+
+                        <form class="col" @submit.prevent="geocoding()">
+                            <input id="input-geocoding" v-model="addressInput">
+                        </form>
+
+                        <button @click="inputShown = false"
+                                v-show="userAddress"
+                        >
+                            &times;
+                        </button>
+                    </div>
+
+                    <div class="col user-address" v-else>
+                        {{ userAddress }}
+                        <button @click="inputShown = true">EDIT</button>
+                    </div>
+
+                </div>
 
                 <button class="col-2" @click="geolocation()">Geolocation</button>
                 <button class="col-2" @click="largeMap = !largeMap">Toggle Map Size</button>
@@ -36,16 +53,17 @@ import store from '@/store'
 import { fitInBounds } from '@/lib/utils'
 import { EventBus } from '@/main'
 import geolocation from '@/map/geolocation'
-import geocoding from '@/map/geocoding'
+import { autocompletion, geocoding } from '@/map/geocoding'
 import calcRoute from '@/map/calcRoute'
 
 
 export default {
     data() {
         return {
-            userAddress: 'tramper weg 1',
+            addressInput: 'tramper weg 1',
             travelMode: 'WALKING',
-            largeMap: false
+            largeMap: false,
+            inputShown: true
         }
     },
 
@@ -53,6 +71,7 @@ export default {
         map()          { return this.$store.getters.map },
         mapCenter()    { return this.$store.getters.mapCenter },
         locations()    { return this.$store.getters.locations },
+        userAddress()  { return this.$store.getters.userAddress },
         userLocation() { return this.$store.getters.userLocation },
         markers()      { return this.$store.getters.markers },
         focusedLocation()    { return this.$store.getters.focusedLocation },
@@ -62,7 +81,8 @@ export default {
     watch: {
         largeMap() {
             setTimeout(() => this.handleMap('resize'), 400)
-        }
+        },
+        userLocation() { this.inputShown = false }
     },
 
 
@@ -74,7 +94,7 @@ export default {
     mounted() {
 
 
-
+        autocompletion()
 
 
     },
@@ -181,7 +201,7 @@ export default {
 
 
 
-        geocoding()   { geocoding(this.userAddress) },
+        geocoding()   { geocoding(this.addressInput) },
         //calcRoute()   { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
         geolocation() { geolocation(this.travelMode) },
 
