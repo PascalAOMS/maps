@@ -1,4 +1,5 @@
 import calcRoute from './calcRoute'
+import { geocoding } from './geocoding'
 import setUserLocation from './setUserLocation'
 import store, { state } from '../store'
 import { fitInBounds } from '../lib/utils'
@@ -11,16 +12,40 @@ export default function(travelMode) {
 
             navigator.geolocation.getCurrentPosition(pos => {
 
-                console.log(pos);
-
                 let position = {
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude
                 }
 
-                // NEEDS REVERSE GEOCODING
+                // reverse geocoding
+                const GEOCODER = new google.maps.Geocoder()
 
-                setUserLocation(position, 'address')
+                GEOCODER.geocode({ location: position }, (results, status) => {
+
+                    let result = results[0].address_components,
+                        street,
+                        number,
+                        district
+
+                    for( let i = 0; i < result.length; i++ ) {
+                        if( result[i].types.includes('route') ) {
+                            street = result[i].long_name
+                        }
+                        if( result[i].types.includes('street_number') ) {
+                            number = result[i].long_name
+                        }
+                        if( result[i].types.includes('sublocality') || result[i].types.includes('locality') ) {
+                            district = result[i].long_name
+                        }
+                    }
+
+                    let formattedAddress = `${street ? street : ''} ${number ? number : ''}${street ? ',' : ''} ${district}`
+
+                    setUserLocation(position, formattedAddress)
+
+                })
+
+                //setUserLocation(position, 'address')
 
 
             }, function() {

@@ -29,7 +29,11 @@ export default {
     methods: {
         focusLocation(markerPos) {
 
-            this.$router.push('/ort/' + this.locations[markerPos].name)
+            let url = this.locations[markerPos].name
+                        .toLowerCase()
+                        .replace(/\s/g, '+')
+
+            this.$router.push('/ort/' + url)
 
             store.commit('SET_FOCUSED_LOCATION', { marker: this.markers[markerPos], index: markerPos })
 
