@@ -7,7 +7,7 @@
 
             <div class="row">
 
-                <address-bar></address-bar>
+                <address-bar :travel-mode="travelMode"></address-bar>
 
                 <button class="col-2" @click="geolocation()">Geolocation</button>
                 <button class="col-2" @click="largeMap = !largeMap">Toggle Map Size</button>
@@ -63,7 +63,7 @@ export default {
         largeMap() {
             setTimeout(() => this.handleMap('resize'), 400)
         },
-        userLocation() { this.inputShown = false }
+        travelMode() { store.commit('SET_TRAVELMODE', this.travelMode) }
     },
 
 
@@ -106,7 +106,7 @@ export default {
             }
 
 
-            //geolocation()
+            //geolocation() // ask for location after boot up
 
         },
 
@@ -180,7 +180,6 @@ export default {
             // }
 
 
-        //calcRoute()   { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
         geolocation() { geolocation(this.travelMode) },
 
 

@@ -1,13 +1,13 @@
-import store from '../store'
+import store, { state } from '../store'
 
-export default function(origin, destination, travelMode) {
+export default function(origin, destination) {
 
     const distancService = new google.maps.DistanceMatrixService()
 
     distancService.getDistanceMatrix({
         origins: [origin],
         destinations: [destination],
-        travelMode
+        travelMode: state.travelMode
     }, (response, status) => {
 
         if (status !== 'OK') {

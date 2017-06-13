@@ -24,5 +24,8 @@ export default {
     },
     SET_ROUTE_META(state, meta) {
         state.route = meta
-    }
+    },
+    SET_TRAVELMODE(state, mode) {
+        state.travelMode = mode
+    },
 }

@@ -19,7 +19,6 @@ export function geocoding(userAddress) {
             return
         }
 
-
         let number,
             street,
             district
@@ -39,7 +38,7 @@ export function geocoding(userAddress) {
         }
 
         let position = results[0].geometry.location,
-            formattedAddress = `${street} ${number ? number : ''}, ${district}`
+            formattedAddress = `${street ? street : ''} ${number ? number : ''} ${street ? ',' : ''}${district}`
 
         setUserLocation(position, formattedAddress)
 
@@ -69,7 +68,6 @@ export function autocompletion() {
 
         const place = AUTOCOMPLETE.getPlace()
 
-
         if( !place.geometry ) {
             return
         }
@@ -84,10 +82,6 @@ export function autocompletion() {
         }
 
         let address = place.name + ', ' + district
-
-        console.log(place);
-
-
 
         setUserLocation(place.geometry.location, address)
 

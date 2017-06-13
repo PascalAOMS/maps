@@ -36,10 +36,14 @@ export default {
 
     computed: {
         userAddress()  { return this.$store.getters.userAddress },
+        userLocation()  { return this.$store.getters.userLocation },
+        focusedLocation()  { return this.$store.getters.focusedLocation },
     },
 
     watch: {
-        userLocation() { this.inputShown = false }
+        userLocation() { this.inputShown = false },
+        userLocation() { this.inputShown = false },
+        focusedLocation() { this.inputShown = false },
     },
 
     methods: {

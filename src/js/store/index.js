@@ -16,7 +16,8 @@ export let state = {
     userLocation: null,
     markers: [],
     directionsRenderer: null,
-    route: null
+    route: null,
+    travelMode: 'TRANSIT'
 }
 
 
@@ -31,6 +32,7 @@ const getters = {
     mapCenter: state => state.mapCenter,
     directionsRenderer: state => state.directionsRenderer,
     route: state => state.route,
+    travelMode: state => state.travelMode,
 }
 
 

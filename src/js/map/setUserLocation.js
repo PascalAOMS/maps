@@ -1,4 +1,5 @@
 import store, { state } from '../store'
+import calcRoute from './calcRoute'
 import { fitInBounds }  from '@/lib/utils'
 
 export default function(position, address) {
@@ -44,7 +45,7 @@ export default function(position, address) {
                 )
 
     if( state.directionsRenderer ) {
-        calcRoute(state.userLocation, state.focusedLocation, travelMode)
+        calcRoute(state.userLocation, state.focusedLocation)
     }
 
 }
