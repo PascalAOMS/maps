@@ -30,19 +30,6 @@ export function setMapOnAll(markers, map) {
 export function fitInBounds(markers) {
     const bounds = new google.maps.LatLngBounds()
 
-    let markerPositons = markers
-
-    // if( markers === state.makers ) {
-    //     markerPositions.map(marker => bound.extend(marker.getPosition))
-    // }
-    // else {
-    //     markerPositions.map(marker => bounds.extend(marker[i]))
-    // }
-
-    // markerPositons.map(marker => {
-    //     bounds.extend(marker.getPosition())
-    // })
-
     for( let i = 0; i < markers.length; i++ ) {
         if( markers[i] === null ) continue // when in detail view w/o user location
 

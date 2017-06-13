@@ -1,6 +1,6 @@
 
 export default {
-    SET_LOCATIONS(state, locations) {
+    SET_RAW_LOCATIONS(state, locations) {
         state.locations = locations
     },
     SET_USER_LOCATION(state, location) {
@@ -16,8 +16,9 @@ export default {
     CREATE_MAP(state, map) {
         state.map = map
     },
-    PUSH_MARKER_TO_LIST(state, marker) {
-        state.markers.push(marker)
+    SET_MARKERS(state, marker) {
+        state.markers = []
+        state.markers = marker
     },
     SET_DIRECTIONS_RENDERER(state, renderer) {
         state.directionsRenderer = renderer

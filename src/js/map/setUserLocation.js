@@ -5,6 +5,7 @@ import { fitInBounds }  from '@/lib/utils'
 export default function(position, address) {
 
     let marker = new google.maps.Marker({
+        user: true,
         position,
         map: state.map,
         title: 'Ich bin hier!',
@@ -21,27 +22,20 @@ export default function(position, address) {
         infoWindow.open(state.map, marker)
     })
 
+    if( state.userLocation )
+        state.userLocation.setMap(null) // remove old position
 
-    if( state.userLocation ) {
-        state.markers[state.markers.length - 1].setMap(null) // hide last marker which is user's
-        state.markers.pop() // delete old user location
-    }
+    marker.setMap(state.map)
 
-    console.log(address);
-
-    store.commit('SET_USER_ADDRESS', address)
-    store.commit('SET_USER_LOCATION', marker)
-    store.commit('PUSH_MARKER_TO_LIST', marker)
-
-    //state.markers[state.markers.length - 1].setMap(state.map) // render all markers again
+    store.commit('SET_USER_ADDRESS', address) // printed address
+    store.commit('SET_USER_LOCATION', marker) // location object
 
     infoWindow.open(state.map, marker)
     setTimeout(() => infoWindow.close(state.map), 2000)
 
-
     fitInBounds(state.focusedLocation
-                     ? [state.focusedLocation, marker]
-                     : state.markers
+                    ? [state.focusedLocation, marker]
+                    : [...state.markers, marker]
                 )
 
     if( state.directionsRenderer ) {

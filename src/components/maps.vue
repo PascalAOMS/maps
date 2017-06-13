@@ -6,6 +6,12 @@
         <main class="container">
 
             <div class="row">
+                <button @click="fetchLocations('schulen')">Schulen</button>
+                <button @click="fetchLocations('wohnungen')">Wohnungen</button>
+            </div>
+
+
+            <div class="row">
 
                 <address-bar :travel-mode="travelMode"></address-bar>
 
@@ -30,7 +36,7 @@
 
 <script>
 import store from '@/store'
-import { fitInBounds } from '@/lib/utils'
+import { setMapOnAll, fitInBounds } from '@/lib/utils'
 import { EventBus } from '@/main'
 import geolocation from '@/map/geolocation'
 import { autocompletion, geocoding } from '@/map/geocoding'
@@ -61,15 +67,15 @@ export default {
 
     watch: {
         largeMap() {
-            setTimeout(() => this.handleMap('resize'), 400)
+            setTimeout(() => google.maps.event.trigger(this.map, 'resize'), 400)
         },
-        travelMode() { store.commit('SET_TRAVELMODE', this.travelMode) }
+        travelMode() { store.commit('SET_TRAVELMODE', this.travelMode) },
     },
 
 
 
     created() {
-        this.fetchLocations()
+        //this.fetchLocations()
     },
 
     mounted() {
@@ -82,27 +88,35 @@ export default {
 
     methods: {
 
-        handleMap(process) {
+        handleMap() {
 
-            if( process === 'init' ) {
+            if( !this.map ) {
                 let mapContainer = document.getElementById('map')
 
-                const map = new google.maps.Map(mapContainer, {
-                    //zoom: 6,
-                    //center: this.mapCenter
-                })
+                const map = new google.maps.Map(mapContainer)
 
                 store.commit('CREATE_MAP', map)
-
-                this.addLocationMarkers()
             }
-            else if( process === 'resize' ) {
-                google.maps.event.trigger(this.map, 'resize')
 
-                fitInBounds(this.focusedLocation
-                                 ? [this.focusedLocation, this.userLocation]
-                                 : this.markers
-                            )
+            this.addLocationMarkers()
+
+            if( this.map ) {
+
+                let boundLocation = []
+
+                if( this.userLocation ) {
+                    boundLocation.push(this.userLocation)
+                }
+
+                if( this.focusedLocation ) {
+                    boundLocation.push(this.focusedLocation)
+                }
+                else {
+                    boundLocation.push(...this.markers)
+                }
+
+                console.log(boundLocation);
+                fitInBounds(boundLocation)
             }
 
 
@@ -110,17 +124,23 @@ export default {
 
         },
 
-        fetchLocations() {
-            fetch('../fuchs.json')
+        fetchLocations(category) {
+            fetch('../' + category + '.json')
                 .then(res => res.json())
-                .then(res => store.commit('SET_LOCATIONS', res))
+                .then(res => store.commit('SET_RAW_LOCATIONS', res))
                 .then(res => {
                     // check if map loaded once
-                    this.handleMap(store.map ? 'resize' : 'init')
+                    this.handleMap()
+                    //console.log(this.$route);
                 })
         },
 
         addLocationMarkers() {
+
+            let markers = []
+
+            if( this.markers )
+                setMapOnAll(this.markers, null)
 
             for( let i = 0; i < this.locations.length; i++ ) {
 
@@ -144,10 +164,13 @@ export default {
                     infoWindow.open(this.map, marker)
                 })
 
-                store.commit('PUSH_MARKER_TO_LIST', marker)
+                markers.push(marker)
 
-                fitInBounds(this.markers)
              }
+
+            // fitInBounds(markers)
+
+            store.commit('SET_MARKERS', markers)
 
         },
 

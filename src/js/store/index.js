@@ -12,9 +12,9 @@ export let state = {
     locationFocused: false,
     focusedIndex: null,
     focusedLocation: null,
-    userAddress: null,
-    userLocation: null,
-    markers: [],
+    userAddress: null, // printed address
+    userLocation: null, // location object
+    markers: null,
     directionsRenderer: null,
     route: null,
     travelMode: 'TRANSIT'

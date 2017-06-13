@@ -38,7 +38,7 @@ export function geocoding(userAddress) {
         }
 
         let position = results[0].geometry.location,
-            formattedAddress = `${street ? street : ''} ${number ? number : ''} ${street ? ',' : ''}${district}`
+            formattedAddress = `${street ? street : ''} ${number ? number : ''}${street ? ',' : ''} ${district}`
 
         setUserLocation(position, formattedAddress)
 
