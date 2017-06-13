@@ -7,27 +7,7 @@
 
             <div class="row">
 
-                <div class="col-8 address-bar">
-
-                    <div class="address-input" v-show="inputShown">
-
-                        <form class="col" @submit.prevent="geocoding()">
-                            <input id="input-geocoding" v-model="addressInput">
-                        </form>
-
-                        <button @click="inputShown = false"
-                                v-show="userAddress"
-                        >
-                            &times;
-                        </button>
-                    </div>
-
-                    <div class="col user-address" v-show="!inputShown">
-                        {{ userAddress }}
-                        <button @click="inputShown = true">EDIT</button>
-                    </div>
-
-                </div>
+                <address-bar></address-bar>
 
                 <button class="col-2" @click="geolocation()">Geolocation</button>
                 <button class="col-2" @click="largeMap = !largeMap">Toggle Map Size</button>
@@ -56,16 +36,17 @@ import geolocation from '@/map/geolocation'
 import { autocompletion, geocoding } from '@/map/geocoding'
 import calcRoute from '@/map/calcRoute'
 
+import AddressBar from './AddressBar.vue'
 
 export default {
     data() {
         return {
-            addressInput: 'tramper weg 1',
             travelMode: 'WALKING',
             largeMap: false,
-            inputShown: true
         }
     },
+
+    components: { AddressBar },
 
     computed: {
         map()          { return this.$store.getters.map },
@@ -199,9 +180,6 @@ export default {
             // }
 
 
-
-
-        geocoding()   { geocoding(this.addressInput) },
         //calcRoute()   { calcRoute(this.userLocation, this.focusedLocation, this.travelMode) },
         geolocation() { geolocation(this.travelMode) },
 
