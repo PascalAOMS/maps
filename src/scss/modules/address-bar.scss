@@ -1,0 +1,90 @@
+
+.address-bar {
+    // position: absolute;
+    // bottom: 20px;
+    // left: 0;
+    // right: 0;
+    // width: 600px;
+    // max-width: 95%;
+    width: 100%;
+    margin: auto;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    h2 {
+        flex-basis: 100%;
+        margin: 0;
+        padding: 5px 0 5px 15px;
+    }
+}
+
+.address-input {
+    display: flex;
+    background-color: $prim-color;
+}
+
+
+form,
+.user-location {
+    flex: 1;
+    padding: 30px 0 20px;
+    font-weight: 700;
+    font-size: 1.6em;
+    color: lighten($prim-color, 50%);
+}
+
+.user-location {
+    padding-left: 20px;
+    background-color: lighten($prim-color, 7%);
+}
+
+input {
+    background: transparent;
+    border: 0;
+    width: calc(100% - 30px);
+    outline: 0;
+    width: 100%;
+    padding: 0 20px;
+    color: currentColor;
+    font-size: inherit;
+    font-weight: inherit;
+
+
+    &::placeholder {
+        color: currentColor;
+    }
+}
+
+
+.input-close { position: relative; z-index: 5; }
+
+
+
+
+.address-input,
+.user-address {
+    flex: 1;
+}
+
+
+.user-address {
+    display: flex;
+}
+
+.input-btn { background-color: #323b4e; }
+
+
+
+.address-enter-active, .address-leave-active {
+    transition: .2s
+}
+
+.address-enter-to.is-editable .geolocation {
+    transform: translateX(0);
+}
+
+.address-enter.is-editable .geolocation {
+    transform: translateX(100%);
+}

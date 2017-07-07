@@ -1,5 +1,7 @@
 @import
 
+'../node_modules/vue-material/dist/vue-material.css',
+
 // TOOLS
 'tools/variables',
 'tools/mixins',
@@ -13,4 +15,6 @@
 'layout/helpers',
 
 // MODULES
-'modules/maps'
+'modules/maps',
+'modules/sidebar',
+'modules/address-bar'

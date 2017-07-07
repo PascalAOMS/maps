@@ -1,24 +1,33 @@
 <template>
 
-    <div class="location-card container">
+    <div class="location-card">
 
-        <div class="row">
+        <router-link class="location-card__back" to="/" >
+            <md-button>
+                <md-icon>chevron_left</md-icon>
+                Overview
+            </md-button>
+        </router-link>
 
-            <div class="col-6">
+
+        <md-tabs md-fixed>
+
+            <md-tab md-label="Info" md-icon="info">
 
                 <h2>{{ location.name }}</h2>
                 <p>{{ location.description }}</p>
 
-            </div>
+            </md-tab>
 
-            <div class="col-6">
 
-                <select v-model="travelMode" v-if="userLocation">
-                    <option value="WALKING">zu Fuß</option>
-                    <option value="TRANSIT">Bus/Bahn</option>
-                    <option value="DRIVING">Auto</option>
-                    <option value="BICYCLING">Fahrrad</option>
-                </select>
+            <md-tab md-label="Directions" md-icon="navigation">
+
+                <md-select class="driving-mode" v-model="travelMode" v-if="userLocation">
+                    <md-option value="WALKING">Walking</md-option>
+                    <md-option value="TRANSIT">Transit</md-option>
+                    <md-option value="DRIVING">Car</md-option>
+                    <md-option value="BICYCLING">Bicycle</md-option>
+                </md-select>
 
                 <div id="panel-distance" class="panel"></div>
 
@@ -30,10 +39,13 @@
                     <div id="route-directions"></div>
                 </div>
 
-            </div>
+            </md-tab>
+
+            <md-icon>chevron_left</md-icon>
 
 
-        </div>
+        </md-tabs>
+
 
 
     </div>

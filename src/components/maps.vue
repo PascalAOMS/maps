@@ -1,30 +1,21 @@
 <template>
 
-    <div>
-        <div id="map" :class="{ 'is-larger': largeMap }"></div>
+    <div class="map-wrap">
 
-        <main class="container">
+        <div class="map-container">
+            <div id="map"></div>
 
-            <div class="row">
-                <button @click="fetchLocations('schulen')">Schulen</button>
-                <button @click="fetchLocations('wohnungen')">Wohnungen</button>
-            </div>
+        </div>
 
 
-            <div class="row">
+        <main class="sidebar">
 
-                <address-bar :travel-mode="travelMode"></address-bar>
+            <address-bar></address-bar>
 
-                <button class="col-2" @click="geolocation()">Geolocation</button>
-                <button class="col-2" @click="largeMap = !largeMap">Toggle Map Size</button>
+            <transition name="fade" mode="out-in">
+                <router-view></router-view>
+            </transition>
 
-                <div class="col-12">
-                    <router-link to="/" >Zeige alle Orte</router-link>
-                    <router-view></router-view>
-                </div>
-
-
-            </div>
 
         </main>
 
@@ -37,17 +28,17 @@
 <script>
 import store from '@/store'
 import { setMapOnAll, fitInBounds } from '@/lib/utils'
-import { EventBus } from '@/main'
-import geolocation from '@/map/geolocation'
+import onResize from '@/lib/onResize'
+import scrollMap from '@/map/scrollMap'
 import { autocompletion, geocoding } from '@/map/geocoding'
 import calcRoute from '@/map/calcRoute'
+import { styles } from '@/map/styles'
 
 import AddressBar from './AddressBar.vue'
 
 export default {
     data() {
         return {
-            travelMode: 'WALKING',
             largeMap: false,
         }
     },
@@ -66,39 +57,60 @@ export default {
     },
 
     watch: {
-        largeMap() {
-            setTimeout(() => google.maps.event.trigger(this.map, 'resize'), 400)
-        },
         travelMode() { store.commit('SET_TRAVELMODE', this.travelMode) },
     },
 
 
 
     created() {
-        //this.fetchLocations()
+
+        document.body.addEventListener('scroll', () => {
+
+        })
     },
 
     mounted() {
+        this.fetchLocations()
 
 
         autocompletion()
+
+
+        const resizeMap = (resize) => {
+
+        //    setTimeout(() => {
+                console.log('handling');
+                google.maps.event.trigger(this.map, 'resize')
+                this.handleMap('resize')
+            //}, 100)
+
+        }
+
+        onResize(resizeMap)
+
+
 
 
     },
 
     methods: {
 
-        handleMap() {
+        handleMap(process) {
 
             if( !this.map ) {
                 let mapContainer = document.getElementById('map')
 
-                const map = new google.maps.Map(mapContainer)
+                const map = new google.maps.Map(mapContainer, {
+                    styles,
+                    disableDefaultUI: true,
+                    backgroundColor: 'none'
+                })
 
                 store.commit('CREATE_MAP', map)
             }
 
-            this.addLocationMarkers()
+            if( process !== 'resize' )
+                this.addLocationMarkers()
 
             if( this.map ) {
 
@@ -125,7 +137,8 @@ export default {
         },
 
         fetchLocations(category) {
-            fetch('../' + category + '.json')
+            fetch('../all.json')
+            // fetch('../' + category + '.json')
                 .then(res => res.json())
                 .then(res => store.commit('SET_RAW_LOCATIONS', res))
                 .then(res => {
@@ -175,6 +188,7 @@ export default {
         },
 
 
+
             // let focusedLocation = this.locations[i]
             //
             // this.map.addMarker({
@@ -202,14 +216,14 @@ export default {
             //     this.calcRoute(this.userLocation, focusedLocation)
             // }
 
-
-        geolocation() { geolocation(this.travelMode) },
-
-
     }
 
 
 
 
 }
+
+
+
+
 </script>

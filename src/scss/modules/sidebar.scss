@@ -1,0 +1,49 @@
+
+.sidebar {
+    flex: 0 0 360px;
+    box-shadow: -5px 0 5px rgba(0,0,0,.1);
+    position: relative;
+    z-index: 10;
+}
+
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
+}
+
+
+.md-theme-default.md-tabs>.md-tabs-navigation {
+    background-color: #354088 !important;
+}
+
+.md-tabs .md-tab-indicator {
+    height: 100%;
+    z-index: -1;
+}
+
+.md-theme-default.md-tabs>.md-tabs-navigation .md-tab-indicator {
+    background: #323b4e !important;
+}
+
+.location-card__back {
+    background-color: #2d3b4e;
+    margin: 0;
+    width: 100%;
+    color: $white;
+    display: block;
+    text-align: left;
+
+    &:hover {
+        background-color: lighten(#354088, 5%);
+    }
+
+    button {
+        padding: 20px 0;
+        width: 100%;
+        margin: 0;
+    }
+
+}

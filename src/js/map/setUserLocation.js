@@ -2,6 +2,7 @@ import store, { state } from '../store'
 import calcRoute from './calcRoute'
 import { fitInBounds }  from '@/lib/utils'
 
+
 export default function(position, address) {
 
     let marker = new google.maps.Marker({
@@ -9,7 +10,7 @@ export default function(position, address) {
         position,
         map: state.map,
         title: 'Ich bin hier!',
-        icon: '../assets/img/pin-user.png'
+        icon: '../../assets/img/pin-user.png'
     })
 
     let infoWindow = new google.maps.InfoWindow({

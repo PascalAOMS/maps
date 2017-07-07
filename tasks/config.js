@@ -3,7 +3,7 @@
 const wp  = false // hashing, disable injection, remove WP files
 const app = true // hsahing, HMR, injection
 
-const proxy = 'https://map.dev' // false || MAMP/Valet DNS
+const proxy = 'http://map.dev' // false || MAMP/Valet DNS
 
 const webp = false // images to webp (set htaccess)
 const hash = app || wp || false // CSS/JS hashing, injection

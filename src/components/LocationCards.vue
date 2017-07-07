@@ -3,10 +3,8 @@
 
     <ul class="locations">
         <li v-for="(location, i) in locations" @click="focusLocation(i)">
-            <b>{{ location.name }}</b><br>
+            <h3>{{ location.name }}</h3>
             {{ location.description }}
-
-            <hr>
         </li>
     </ul>
 
